@@ -22,10 +22,36 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private TipoDireccionRepository _tipoDireccionRepository;
     private TipoPersonaRepository _tipoPersonaRepository;
     private TurnoRepository _turnoRepository;
+    private RolRepository _rolesRepository;
+    private UserRepository _usersRepository;
 
     public UnitOfWork(SecurityContext context)
     {
         _context = context;
+    }
+
+    public IRol Roles
+    {
+        get
+        {
+            if (_rolesRepository == null)
+            {
+                _rolesRepository = new RolRepository(_context);
+            }
+            return _rolesRepository;
+        }
+    }
+
+    public IUser Users
+    {
+        get
+        {
+            if (_usersRepository == null)
+            {
+                _usersRepository = new UserRepository(_context);
+            }
+            return _usersRepository;
+        }
     }
 
     public ICategoriaPer CategoriaPers
