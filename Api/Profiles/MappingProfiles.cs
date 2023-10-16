@@ -8,6 +8,8 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<User, UserDto>().ReverseMap();
+        CreateMap<Rol, RolDto>().ReverseMap();
         CreateMap<CategoriaPer, CategoriaPerDto>().ReverseMap();
         CreateMap<Ciudad, CiudadDto>().ReverseMap();
         CreateMap<ContactoPer, ContactoPerDto>().ReverseMap();

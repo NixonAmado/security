@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Authorize(Roles = "Administrator")]
-public class ContratoController : BaseApiController
+[Authorize(Roles = "Manager")]
+public class RolController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ContratoController(IUnitOfWork unitOfWork, IMapper mapper)
+    public RolController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -22,55 +22,56 @@ public class ContratoController : BaseApiController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<ContratoDto>>> Get()
+    public async Task<ActionResult<IEnumerable<RolDto>>> Get()
     {
-        var contrato = await _unitOfWork.Contratos.GetAllAsync();
-        return _mapper.Map<List<ContratoDto>>(contrato);
+        var rol = await _unitOfWork.Roles.GetAllAsync();
+        return _mapper.Map<List<RolDto>>(rol);
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ContratoDto>> Get(int id)
+    public async Task<ActionResult<RolDto>> Get(int id)
     {
-        var contrato = await _unitOfWork.Contratos.GetByIdAsync(id);
-        if (contrato == null)
+        var rol = await _unitOfWork.Roles.GetByIdAsync(id);
+        if (rol == null)
         {
             return NotFound();
         }
-        return _mapper.Map<ContratoDto>(contrato);
+        return _mapper.Map<RolDto>(rol);
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Contrato>> Post(ContratoDto contratoDto)
+    public async Task<ActionResult<Rol>> Post(RolDto rolDto)
     {
-        var contrato = _mapper.Map<Contrato>(contratoDto);
-        _unitOfWork.Contratos.Add(contrato);
+        var rol = _mapper.Map<Rol>(rolDto);
+        _unitOfWork.Roles.Add(rol);
         await _unitOfWork.SaveAsync();
-        if (contrato == null)
+        if (rol == null)
         {
             return BadRequest();
         }
-        return CreatedAtAction(nameof(Post), contratoDto);
+        rolDto.Id = rol.Id;
+        return CreatedAtAction(nameof(Post), new { id = rolDto.Id }, rolDto);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ContratoDto>> Put(int id, [FromBody] ContratoDto contratoDto)
+    public async Task<ActionResult<RolDto>> Put(int id, [FromBody] RolDto rolDto)
     {
-        if (contratoDto == null)
+        if (rolDto == null)
         {
             return NotFound();
         }
-        var contrato = _mapper.Map<Contrato>(contratoDto);
-        _unitOfWork.Contratos.Update(contrato);
+        var rol = _mapper.Map<Rol>(rolDto);
+        _unitOfWork.Roles.Update(rol);
         await _unitOfWork.SaveAsync();
-        return contratoDto;
+        return rolDto;
     }
 
     [HttpDelete("{id}")]
@@ -78,12 +79,12 @@ public class ContratoController : BaseApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        var contrato = await _unitOfWork.Contratos.GetByIdAsync(id);
-        if (contrato == null)
+        var rol = await _unitOfWork.Roles.GetByIdAsync(id);
+        if (rol == null)
         {
             return NotFound();
         }
-        _unitOfWork.Contratos.Remove(contrato);
+        _unitOfWork.Roles.Remove(rol);
         await _unitOfWork.SaveAsync();
         return NoContent();
     }

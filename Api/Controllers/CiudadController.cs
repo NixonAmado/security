@@ -2,10 +2,12 @@ using Api.Dtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize(Roles = "Employee")]
 public class CiudadController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;

@@ -2,10 +2,12 @@ using Api.Dtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize(Roles = "Administrator")]
 public class ProgramacionController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
