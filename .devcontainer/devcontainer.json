@@ -1,0 +1,52 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": "true",
+            "username": "vscode",
+            "userUid": "1000",
+            "userGid": "1000",
+            "upgradePackages": "true"
+        },
+	    "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest",
+            "ppa": "false"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": { }
+    },
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"gitHub.copilot",
+				"enkia.tokyo-night",
+				"vscode-icons-team.vscode-icons",
+				"ms-azuretools.vscode-docker",
+				"github.copilot-chat",
+				"csharpier.csharpier-vscode"
+			],
+			"settings": {
+				"editor.tabSize": 4,
+				"terminal.integrated.shell.linux": "/usr/bin/zsh",
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"terminal.integrated.profiles.linux": {
+				  "bash": {
+					"path": "bash",
+					"icon": "terminal-debian"
+				  },
+				  "zsh": {
+					"path": "zsh",
+					"icon": "terminal-debian"
+				  }
+				}
+			}
+		}
+	},
+	"remoteUser": "vscode",
+	"postCreateCommand": {
+		"command": "sudo dotnet workload update && dotnet tool install --global dotnet-ef && dotnet tool install --global csharpier"
+	}
+}
