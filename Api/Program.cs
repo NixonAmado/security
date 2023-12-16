@@ -1,4 +1,6 @@
 using System.Reflection;
+using Api.Extensions;
+using Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 
@@ -13,8 +15,14 @@ builder
     });
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddControllers();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -31,5 +39,7 @@ using (var scope = app.Services.CreateScope())
         _logger.LogError(ex, "Ocurrio un error durante la migracion");
     }
 }
+
+app.MapControllers();
 
 app.Run();
