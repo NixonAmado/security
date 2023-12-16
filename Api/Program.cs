@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 
@@ -10,6 +11,8 @@ builder
         string connectionString = builder.Configuration.GetConnectionString("ConexMysql");
         options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     });
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
