@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -55,6 +56,22 @@ namespace Persistence.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PRIMARY", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb3")
+                .Annotation("Relational:Collation", "utf8mb3_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "rol",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    rolName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb3_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb3")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rol", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb3")
                 .Annotation("Relational:Collation", "utf8mb3_general_ci");
@@ -122,6 +139,26 @@ namespace Persistence.Data.Migrations
                 .Annotation("Relational:Collation", "utf8mb3_general_ci");
 
             migrationBuilder.CreateTable(
+                name: "user",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    userName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb3_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb3"),
+                    email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, collation: "utf8mb3_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb3"),
+                    password = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false, collation: "utf8mb3_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb3")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb3")
+                .Annotation("Relational:Collation", "utf8mb3_general_ci");
+
+            migrationBuilder.CreateTable(
                 name: "departamento",
                 columns: table => new
                 {
@@ -138,6 +175,58 @@ namespace Persistence.Data.Migrations
                         column: x => x.id_pais,
                         principalTable: "pais",
                         principalColumn: "id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb3")
+                .Annotation("Relational:Collation", "utf8mb3_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "refreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Token = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb3_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb3"),
+                    Expires = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Revoked = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_refreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_refreshToken_user_UserId",
+                        column: x => x.UserId,
+                        principalTable: "user",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb3")
+                .Annotation("Relational:Collation", "utf8mb3_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "userRol",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RolId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_userRol", x => new { x.UserId, x.RolId });
+                    table.ForeignKey(
+                        name: "FK_userRol_rol_RolId",
+                        column: x => x.RolId,
+                        principalTable: "rol",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_userRol_user_UserId",
+                        column: x => x.UserId,
+                        principalTable: "user",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb3")
                 .Annotation("Relational:Collation", "utf8mb3_general_ci");
@@ -396,6 +485,16 @@ namespace Persistence.Data.Migrations
                 name: "fk_turno_programacion",
                 table: "programacion",
                 column: "id_turno");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_refreshToken_UserId",
+                table: "refreshToken",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_userRol_RolId",
+                table: "userRol",
+                column: "RolId");
         }
 
         /// <inheritdoc />
@@ -411,6 +510,12 @@ namespace Persistence.Data.Migrations
                 name: "programacion");
 
             migrationBuilder.DropTable(
+                name: "refreshToken");
+
+            migrationBuilder.DropTable(
+                name: "userRol");
+
+            migrationBuilder.DropTable(
                 name: "tipoContacto");
 
             migrationBuilder.DropTable(
@@ -421,6 +526,12 @@ namespace Persistence.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "turno");
+
+            migrationBuilder.DropTable(
+                name: "rol");
+
+            migrationBuilder.DropTable(
+                name: "user");
 
             migrationBuilder.DropTable(
                 name: "persona");
