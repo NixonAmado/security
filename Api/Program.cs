@@ -18,6 +18,7 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices();
 builder.Services.AddJwt(builder.Configuration);
+builder.Services.ConfigureApiVersioning();
 
 var app = builder.Build();
 

@@ -2,6 +2,7 @@ using System.Text;
 using Api.Helpers;
 using Api.Services;
 using Application.UnitOfWork;
+using Asp.Versioning;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,5 +48,21 @@ public static class ApplicationServiceExtension
                     )
                 };
             });
+    }
+
+    public static void ConfigureApiVersioning(this IServiceCollection services)
+    {
+        services
+            .AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1.0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader("v"),
+                    new HeaderApiVersionReader() { HeaderNames = { "api-version" } }
+                );
+                options.ReportApiVersions = true;
+            })
+            .AddMvc();
     }
 }
