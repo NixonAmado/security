@@ -4,8 +4,16 @@ using Api.Helpers;
 using AspNetCoreRateLimit;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom
+    .Configuration(builder.Configuration)
+    .Enrich
+    .FromLogContext()
+    .CreateLogger();
 
 builder
     .Services
@@ -22,6 +30,7 @@ builder.Services.AddJwt(builder.Configuration);
 builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureRatelimiting();
+builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
