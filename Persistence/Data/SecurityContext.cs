@@ -11,6 +11,10 @@ public partial class SecurityContext : DbContext
     public SecurityContext(DbContextOptions<SecurityContext> options)
         : base(options) { }
 
+    public virtual DbSet<Rol> Roles { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
     public virtual DbSet<CategoriaPer> CategoriaPers { get; set; }
 
     public virtual DbSet<Ciudad> Ciudades { get; set; }
