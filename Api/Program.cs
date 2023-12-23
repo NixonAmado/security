@@ -2,6 +2,9 @@ using System.Reflection;
 using Api.Extensions;
 using Api.Helpers;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Serilog;
@@ -31,6 +34,11 @@ builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureRatelimiting();
 builder.Logging.AddSerilog(logger);
+builder.Services.AddDataProtection().PersistKeysToDbContext<SecurityContext>().UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+{
+    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+});
 
 var app = builder.Build();
 

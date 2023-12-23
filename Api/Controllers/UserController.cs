@@ -79,10 +79,14 @@ public class UserController : BaseApiController
     [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken()
     {
-        var refreshToken = Request.Cookies["refreshToken"];
+        var encryptedRefreshToken = Request.Cookies["refreshToken"];
+        var refreshToken = _userService.DecryptCookie(encryptedRefreshToken);
         var response = await _userService.RefreshTokenAsync(refreshToken);
         if (!string.IsNullOrEmpty(response.RefreshToken))
-            SetRefreshTokenInCookie(response.RefreshToken);
+        {
+            var reEncryptedRefreshToken = _userService.EncryptCookie(response.RefreshToken);
+            SetRefreshTokenInCookie(reEncryptedRefreshToken);
+        }
         return Ok(response);
     }
 
@@ -119,11 +123,12 @@ public class UserController : BaseApiController
 
     private void SetRefreshTokenInCookie(string refreshToken)
     {
+        var encryptedRefreshToken = _userService.EncryptCookie(refreshToken);
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
             Expires = DateTime.UtcNow.AddMinutes(_jwt.DurationInMinutesCookie),
         };
-        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        Response.Cookies.Append("refreshToken", encryptedRefreshToken, cookieOptions);
     }
 }

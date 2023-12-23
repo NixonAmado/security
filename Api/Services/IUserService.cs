@@ -8,5 +8,7 @@ namespace Api.Services
         Task<DataUserDto> GetTokenAsync(LoginDto loginDto);
         Task<string> AddRoleAsync(AddRoleDto addRoleDto);
         Task<DataUserDto> RefreshTokenAsync(string refreshToken);
+        string EncryptCookie(string cookie);
+        string DecryptCookie(string encryptedCookie);
     }
 }

@@ -1,15 +1,18 @@
 ﻿using System.Reflection;
 using Domain.Entities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Data;
 
-public partial class SecurityContext : DbContext
+public partial class SecurityContext : DbContext, IDataProtectionKeyContext
 {
     public SecurityContext() { }
 
     public SecurityContext(DbContextOptions<SecurityContext> options)
         : base(options) { }
+
+    public virtual DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
     public virtual DbSet<Rol> Roles { get; set; }
 

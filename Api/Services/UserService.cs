@@ -6,6 +6,7 @@ using Api.Dtos;
 using Api.Helpers;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,16 +18,19 @@ namespace Api.Services
         private readonly JWT _jwt;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IDataProtectionProvider _dataProtectionProvider;
 
         public UserService(
             IUnitOfWork unitOfWork,
             IOptions<JWT> jwt,
-            IPasswordHasher<User> passwordHasher
+            IPasswordHasher<User> passwordHasher,
+            IDataProtectionProvider dataProtectionProvider
         )
         {
             _jwt = jwt.Value;
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
+            _dataProtectionProvider = dataProtectionProvider;
         }
 
         public async Task<string> RegisterAsync(RegisterDto registerDto)
@@ -240,6 +244,18 @@ namespace Api.Services
                 signingCredentials: signingCredentials
             );
             return jwtSecurityToken;
+        }
+
+        public string EncryptCookie(string cookie)
+        {
+            var protector = _dataProtectionProvider.CreateProtector("SecurityCookie");
+            return protector.Protect(cookie);
+        }
+
+        public string DecryptCookie(string encryptedCookie)
+        {
+            var protector = _dataProtectionProvider.CreateProtector("SecurityCookie");
+            return protector.Unprotect(encryptedCookie);
         }
     }
 }
